@@ -1,19 +1,24 @@
-#  Music Stream Backend using Node.js, Express & MongoDB
+````markdown
+# 🎵 Music Stream Backend using Node.js, Express & MongoDB
 
-A backend API for a music streaming platform built with **Node.js**, **Express.js**, **MongoDB**, **Mongoose**, **JWT (JSON Web Tokens)**, **bcryptjs**, and **Cookies**.
+A backend API for a music streaming platform built with **Node.js**, **Express.js**, **MongoDB**, **Mongoose**, **JWT (JSON Web Tokens)**, **bcryptjs**, **Cookies**, **Multer**, and **ImageKit**.
 
-This project demonstrates how authentication works in modern web applications, including user registration, login, password hashing, JWT token generation, cookie-based authentication, and database integration.
+This project demonstrates how authentication and authorization work in modern web applications. It includes user registration, login, password hashing, JWT token generation, cookie-based authentication, role-based access control, audio upload functionality, and cloud storage integration.
 
 ---
 
-##  Features
+## 🚀 Features
 
 - User Registration API
 - User Login API
-- MongoDB Database Integration
 - Password Hashing using bcryptjs
 - JWT Token Generation
 - Cookie-Based Authentication
+- Role-Based Authorization
+- Music Upload API
+- Audio File Upload using Multer
+- ImageKit Integration
+- MongoDB Database Integration
 - Environment Variables Configuration
 - MVC Architecture
 - Mongoose Models
@@ -22,7 +27,7 @@ This project demonstrates how authentication works in modern web applications, i
 
 ---
 
-##  Tech Stack
+## 🛠️ Tech Stack
 
 ### Backend
 
@@ -40,30 +45,43 @@ This project demonstrates how authentication works in modern web applications, i
 - bcryptjs
 - Cookie Parser
 
+### File Upload
+
+- Multer
+
+### Cloud Storage
+
+- ImageKit
+
 ### Environment Management
 
 - Dotenv
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
 ```bash
 music-stream-backend/
 │
 ├── src/
 │   ├── controllers/
-│   │   └── auth.controller.js
+│   │   ├── auth.controller.js
+│   │   └── music.controller.js
 │   │
 │   ├── db/
 │   │   └── db.js
 │   │
 │   ├── models/
-│   │   │── user.model.js
+│   │   ├── user.model.js
+│   │   └── music.model.js
 │   │
 │   ├── routes/
-│   │   │── auth.routes.js
-│   │   │── music.routes.js
+│   │   ├── auth.routes.js
+│   │   └── music.routes.js
+│   │
+│   ├── services/
+│   │   └── storage.service.js
 │   │
 │   └── app.js
 │
@@ -76,7 +94,7 @@ music-stream-backend/
 
 ---
 
-##  Installation
+## ⚙️ Installation
 
 ### 1. Clone the Repository
 
@@ -98,7 +116,7 @@ npm install
 
 ---
 
-##  Environment Variables
+## 🔐 Environment Variables
 
 Create a `.env` file in the root directory:
 
@@ -108,11 +126,13 @@ PORT=8080
 MONGO_URI=your_mongodb_connection_string
 
 JWT_SECRET=your_jwt_secret
+
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 ```
 
 ---
 
-##  Running the Application
+## ▶️ Running the Application
 
 Start the server:
 
@@ -134,9 +154,9 @@ http://localhost:8080
 
 ---
 
-##  API Endpoints
+# 📌 API Endpoints
 
-### Register User
+## Register User
 
 **POST**
 
@@ -144,18 +164,18 @@ http://localhost:8080
 /api/auth/register
 ```
 
-#### Request Body
+### Request Body
 
 ```json
 {
   "username": "testuser",
   "email": "test@example.com",
   "password": "123456",
-  "role": "user"
+  "role": "artist"
 }
 ```
 
-#### Success Response
+### Success Response
 
 ```json
 {
@@ -164,14 +184,14 @@ http://localhost:8080
     "id": "...",
     "username": "testuser",
     "email": "test@example.com",
-    "role": "user"
+    "role": "artist"
   }
 }
 ```
 
 ---
 
-### Login User
+## Login User
 
 **POST**
 
@@ -179,7 +199,7 @@ http://localhost:8080
 /api/auth/login
 ```
 
-#### Request Body
+### Request Body
 
 ```json
 {
@@ -188,7 +208,7 @@ http://localhost:8080
 }
 ```
 
-#### Success Response
+### Success Response
 
 ```json
 {
@@ -197,14 +217,50 @@ http://localhost:8080
     "id": "...",
     "username": "testuser",
     "email": "test@example.com",
-    "role": "user"
+    "role": "artist"
   }
 }
 ```
 
 ---
 
-##  Authentication Flow
+## Upload Music
+
+**POST**
+
+```http
+/api/music/upload
+```
+
+### Form Data
+
+| Key | Type |
+|------|------|
+| title | text |
+| music | file |
+
+### Authentication
+
+- JWT Cookie Required
+- User Role must be `artist`
+
+### Success Response
+
+```json
+{
+  "message": "Music created successfully",
+  "music": {
+    "_id": "...",
+    "title": "My Song",
+    "uri": "https://ik.imagekit.io/...",
+    "artist": "userId"
+  }
+}
+```
+
+---
+
+# 🔄 Authentication & Upload Flow
 
 ### Step 1: User Registration
 
@@ -240,19 +296,46 @@ const token = jwt.sign(
 res.cookie("token", token);
 ```
 
-### Step 6: Verify Password
+### Step 6: Verify Token
 
 ```javascript
-const isPasswordValid = await bcrypt.compare(password, user.password);
+const decoded = jwt.verify(
+  token,
+  process.env.JWT_SECRET
+);
 ```
 
-### Step 7: Authenticate User
+### Step 7: Role-Based Authorization
 
-If the credentials are valid, access is granted.
+```javascript
+if (decoded.role !== "artist") {
+  return res.status(403).json({
+    message: "You don't have access to create music",
+  });
+}
+```
+
+### Step 8: Upload Audio to ImageKit
+
+```javascript
+const result = await uploadFile(
+  req.file.buffer.toString("base64")
+);
+```
+
+### Step 9: Save Music Metadata
+
+```javascript
+const music = await musicModel.create({
+  uri: result.url,
+  title,
+  artist: decoded.id,
+});
+```
 
 ---
 
-##  Concepts Practiced
+## 📚 Concepts Practiced
 
 - Express Routing
 - Controllers
@@ -261,25 +344,34 @@ If the credentials are valid, access is granted.
 - JWT Authentication
 - Password Hashing
 - Cookie-Based Authentication
+- Role-Based Authorization
+- Multer File Upload
+- ImageKit Integration
 - Environment Variables
 - Async/Await
 - Error Handling
 - REST APIs
 - MVC Architecture
+- Cloud Storage
+- File Handling
 
 ---
 
-##  Upcoming Features
+## 🔮 Upcoming Features
 
 - Authentication Middleware
-- Protected Routes
-- Authorization
-- Role-Based Access Control
-- Music APIs
+- Protected Routes Middleware
 - Playlist APIs
+- Get All Music API
+- Delete Music API
+- Search Music API
+- Like and Favorite APIs
+- User Dashboard
 - Artist Dashboard
+- Streaming Support
 
 ---
+
 
 ##  Connect With Me
 
