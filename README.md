@@ -1,4 +1,3 @@
-````markdown
 # 🎵 Music Stream Backend using Node.js, Express & MongoDB
 
 A backend API for a music streaming platform built with **Node.js**, **Express.js**, **MongoDB**, **Mongoose**, **JWT (JSON Web Tokens)**, **bcryptjs**, **Cookies**, **Multer**, and **ImageKit**.
@@ -9,19 +8,31 @@ This project demonstrates how authentication and authorization work in modern we
 
 ## 🚀 Features
 
+### 🔐 Authentication & Authorization
+
 - User Registration API
 - User Login API
 - Password Hashing using bcryptjs
 - JWT Token Generation
 - Cookie-Based Authentication
 - Role-Based Authorization
+
+### 🎵 Music Management
+
 - Music Upload API
 - Audio File Upload using Multer
-- ImageKit Integration
+- Artist-Only Upload Access
+
+### ☁️ Storage & Database
+
 - MongoDB Database Integration
-- Environment Variables Configuration
+- ImageKit Integration
+
+### 🏗️ Architecture
+
 - MVC Architecture
 - Mongoose Models
+- Environment Variables Configuration
 - Error Handling
 - Modular Folder Structure
 
@@ -96,19 +107,19 @@ music-stream-backend/
 
 ## ⚙️ Installation
 
-### 1. Clone the Repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/AdarshYadav-dev/music-stream-backend.git
 ```
 
-### 2. Navigate to Project Directory
+### 2️⃣ Navigate to Project Directory
 
 ```bash
 cd music-stream-backend
 ```
 
-### 3. Install Dependencies
+### 3️⃣ Install Dependencies
 
 ```bash
 npm install
@@ -134,13 +145,13 @@ IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 
 ## ▶️ Running the Application
 
-Start the server:
+### Start Production Server
 
 ```bash
 npm start
 ```
 
-For development:
+### Start Development Server
 
 ```bash
 npm run dev
@@ -156,12 +167,20 @@ http://localhost:8080
 
 # 📌 API Endpoints
 
-## Register User
+| Method | Endpoint             | Description   |
+| ------ | -------------------- | ------------- |
+| POST   | `/api/auth/register` | Register User |
+| POST   | `/api/auth/login`    | Login User    |
+| POST   | `/api/music/upload`  | Upload Music  |
 
-**POST**
+---
+
+## 👤 Register User
+
+### Endpoint
 
 ```http
-/api/auth/register
+POST /api/auth/register
 ```
 
 ### Request Body
@@ -191,12 +210,12 @@ http://localhost:8080
 
 ---
 
-## Login User
+## 🔑 Login User
 
-**POST**
+### Endpoint
 
 ```http
-/api/auth/login
+POST /api/auth/login
 ```
 
 ### Request Body
@@ -224,18 +243,18 @@ http://localhost:8080
 
 ---
 
-## Upload Music
+## 🎵 Upload Music
 
-**POST**
+### Endpoint
 
 ```http
-/api/music/upload
+POST /api/music/upload
 ```
 
 ### Form Data
 
-| Key | Type |
-|------|------|
+| Field | Type |
+| ----- | ---- |
 | title | text |
 | music | file |
 
@@ -260,7 +279,7 @@ http://localhost:8080
 
 ---
 
-# 🔄 Authentication & Upload Flow
+## 🔄 Authentication & Upload Flow
 
 ### Step 1: User Registration
 
@@ -299,10 +318,7 @@ res.cookie("token", token);
 ### Step 6: Verify Token
 
 ```javascript
-const decoded = jwt.verify(
-  token,
-  process.env.JWT_SECRET
-);
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
 ```
 
 ### Step 7: Role-Based Authorization
@@ -318,9 +334,7 @@ if (decoded.role !== "artist") {
 ### Step 8: Upload Audio to ImageKit
 
 ```javascript
-const result = await uploadFile(
-  req.file.buffer.toString("base64")
-);
+const result = await uploadFile(req.file.buffer.toString("base64"));
 ```
 
 ### Step 9: Save Music Metadata
@@ -372,14 +386,15 @@ const music = await musicModel.create({
 
 ---
 
-
-##  Connect With Me
+## 🤝 Connect With Me
 
 - GitHub: [AdarshYadav-dev](https://github.com/AdarshYadav-dev)
 - LinkedIn: [Adarsh Yadav](https://www.linkedin.com/in/adarsh-yadav-%F0%9F%A7%91%F0%9F%8F%BB%E2%80%8D%F0%9F%92%BB-7aa9a1276/)
 
 ---
 
-##  License
+## 📄 License
 
 This project is licensed under the MIT License.
+
+⭐ If you found this project useful, consider giving it a star on GitHub.
